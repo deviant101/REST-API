@@ -1,6 +1,9 @@
 package main
 
-import "database/sql"
+import (
+	"database/sql"
+	"errors"
+)
 
 type Product struct {
 	ID       int     `json:"id"`
@@ -50,4 +53,15 @@ func (p *Product) createProduct(db *sql.DB) error {
 	}
 	p.ID = int(id)
 	return nil
+}
+
+func (p *Product) updateProduct(db *sql.DB) error {
+
+	result, err := db.Exec("UPDATE items SET name=?, quantity=?, price=? WHERE id=?", p.Name, p.Quantity, p.Price, p.ID)
+	rowsAffected, err := result.RowsAffected()
+
+	if rowsAffected == 0 {
+		return errors.New("Product with this id does not exist")
+	}
+	return err
 }

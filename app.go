@@ -100,13 +100,36 @@ func (app *App) createProduct(w http.ResponseWriter, r *http.Request) {
 	sendResponse(w, http.StatusCreated, prod)
 }
 
+func (app *App) updateProduct(w http.ResponseWriter, r *http.Request) {
+
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		sendError(w, http.StatusNotFound, "invalid product id")
+		return
+	}
+	var prod Product
+	err = json.NewDecoder(r.Body).Decode(&prod)
+	if err != nil {
+		sendError(w, http.StatusBadRequest, "Invalid request payload")
+		return
+	}
+	defer r.Body.Close()
+	prod.ID = id
+	if err := prod.updateProduct(app.DB); err != nil {
+		sendError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	sendResponse(w, http.StatusOK, prod)
+}
+
 func (app *App) handleRoutes() {
 
 	app.Router.HandleFunc("/products", app.getProducts).Methods("GET")
 	app.Router.HandleFunc("/product/{id}", app.getProduct).Methods("GET")
 	app.Router.HandleFunc("/product", app.createProduct).Methods("POST")
+	app.Router.HandleFunc("/product/{id}", app.updateProduct).Methods("PUT")
 
-	// app.Router.HandleFunc("/products", app.createProduct).Methods("POST")
 	// app.Router.HandleFunc("/products/{id:[0-9]+}", app.getProduct).Methods("GET")
 	// app.Router.HandleFunc("/products/{id:[0-9]+}", app.updateProduct).Methods("PUT")
 	// app.Router.HandleFunc("/products/{id:[0-9]+}", app.deleteProduct).Methods("DELETE")
