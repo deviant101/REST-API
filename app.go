@@ -123,14 +123,28 @@ func (app *App) updateProduct(w http.ResponseWriter, r *http.Request) {
 	sendResponse(w, http.StatusOK, prod)
 }
 
+func (app *App) deleteProduct(w http.ResponseWriter, r *http.Request) {
+
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		sendError(w, http.StatusNotFound, "invalid product id")
+		return
+	}
+	defer r.Body.Close()
+	var prod Product = Product{ID: id}
+	if err := prod.deleteProduct(app.DB); err != nil {
+		sendError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	sendResponse(w, http.StatusOK, map[string]string{"result": "Successful deletion"})
+}
+
 func (app *App) handleRoutes() {
 
 	app.Router.HandleFunc("/products", app.getProducts).Methods("GET")
 	app.Router.HandleFunc("/product/{id}", app.getProduct).Methods("GET")
 	app.Router.HandleFunc("/product", app.createProduct).Methods("POST")
 	app.Router.HandleFunc("/product/{id}", app.updateProduct).Methods("PUT")
-
-	// app.Router.HandleFunc("/products/{id:[0-9]+}", app.getProduct).Methods("GET")
-	// app.Router.HandleFunc("/products/{id:[0-9]+}", app.updateProduct).Methods("PUT")
-	// app.Router.HandleFunc("/products/{id:[0-9]+}", app.deleteProduct).Methods("DELETE")
+	app.Router.HandleFunc("/product/{id}", app.deleteProduct).Methods("DELETE")
 }

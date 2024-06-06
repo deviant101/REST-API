@@ -58,8 +58,23 @@ func (p *Product) createProduct(db *sql.DB) error {
 func (p *Product) updateProduct(db *sql.DB) error {
 
 	result, err := db.Exec("UPDATE items SET name=?, quantity=?, price=? WHERE id=?", p.Name, p.Quantity, p.Price, p.ID)
+	if err != nil {
+		return err
+	}
 	rowsAffected, err := result.RowsAffected()
+	if rowsAffected == 0 {
+		return errors.New("Product with this id does not exist")
+	}
+	return err
+}
 
+func (p *Product) deleteProduct(db *sql.DB) error {
+
+	result, err := db.Exec("DELETE FROM items WHERE id=?", p.ID)
+	if err != nil {
+		return err
+	}
+	rowsAffected, err := result.RowsAffected()
 	if rowsAffected == 0 {
 		return errors.New("Product with this id does not exist")
 	}
