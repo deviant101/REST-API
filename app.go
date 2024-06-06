@@ -84,10 +84,27 @@ func (app *App) getProduct(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func (app *App) createProduct(w http.ResponseWriter, r *http.Request) {
+
+	var prod Product
+	err := json.NewDecoder(r.Body).Decode(&prod)
+	if err != nil {
+		sendError(w, http.StatusBadRequest, "Invalid request payload")
+		return
+	}
+	defer r.Body.Close()
+	if err := prod.createProduct(app.DB); err != nil {
+		sendError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	sendResponse(w, http.StatusCreated, prod)
+}
+
 func (app *App) handleRoutes() {
 
 	app.Router.HandleFunc("/products", app.getProducts).Methods("GET")
 	app.Router.HandleFunc("/product/{id}", app.getProduct).Methods("GET")
+	app.Router.HandleFunc("/product", app.createProduct).Methods("POST")
 
 	// app.Router.HandleFunc("/products", app.createProduct).Methods("POST")
 	// app.Router.HandleFunc("/products/{id:[0-9]+}", app.getProduct).Methods("GET")

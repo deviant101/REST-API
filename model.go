@@ -37,3 +37,17 @@ func (p *Product) getProduct(db *sql.DB) error {
 	}
 	return nil
 }
+
+func (p *Product) createProduct(db *sql.DB) error {
+
+	result, err := db.Exec("INSERT INTO items(name, quantity, price) VALUES(?, ?, ?)", p.Name, p.Quantity, p.Price)
+	if err != nil {
+		return err
+	}
+	id, err := result.LastInsertId()
+	if err != nil {
+		return err
+	}
+	p.ID = int(id)
+	return nil
+}
