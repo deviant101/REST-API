@@ -27,3 +27,13 @@ func getProducts(db *sql.DB) ([]Product, error) {
 	}
 	return products, nil
 }
+
+func (p *Product) getProduct(db *sql.DB) error {
+
+	row := db.QueryRow("SELECT name, quantity, price FROM items WHERE id=?", p.ID)
+	err := row.Scan(&p.Name, &p.Quantity, &p.Price)
+	if err != nil {
+		return err
+	}
+	return nil
+}

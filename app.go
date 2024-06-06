@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
@@ -59,9 +60,35 @@ func (app *App) getProducts(w http.ResponseWriter, r *http.Request) {
 	sendResponse(w, http.StatusOK, products)
 }
 
+func (app *App) getProduct(w http.ResponseWriter, r *http.Request) {
+
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	// product, err := getProduct(app.DB, id)
+	if err != nil {
+		sendError(w, http.StatusNotFound, "invalid product id")
+		return
+	}
+	prod := Product{ID: id}
+	err = prod.getProduct(app.DB)
+	if err != nil {
+		switch err {
+		case sql.ErrNoRows:
+			sendError(w, http.StatusNotFound, "Product not found")
+		default:
+			sendError(w, http.StatusInternalServerError, err.Error())
+		}
+		return
+	}
+	sendResponse(w, http.StatusOK, prod)
+
+}
+
 func (app *App) handleRoutes() {
 
 	app.Router.HandleFunc("/products", app.getProducts).Methods("GET")
+	app.Router.HandleFunc("/product/{id}", app.getProduct).Methods("GET")
+
 	// app.Router.HandleFunc("/products", app.createProduct).Methods("POST")
 	// app.Router.HandleFunc("/products/{id:[0-9]+}", app.getProduct).Methods("GET")
 	// app.Router.HandleFunc("/products/{id:[0-9]+}", app.updateProduct).Methods("PUT")
