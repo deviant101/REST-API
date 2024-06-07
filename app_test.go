@@ -37,6 +37,7 @@ func createTables() {
 
 func clearTable() {
 	app.DB.Exec("DELETE FROM items")
+	app.DB.Exec("ALTER TABLE items AUTO_INCREMENT = 1")
 	log.Println("Table Cleared")
 }
 
@@ -86,5 +87,54 @@ func TestCreateProduct(t *testing.T) {
 	}
 	if responseMap["quantity"] != 20.0 {
 		t.Errorf("Expected: 20, Received: %v", responseMap["quantity"])
+	}
+}
+
+func TestDeleteProduct(t *testing.T) {
+	clearTable()
+	addProduct("newProduct", 10, 100.00)
+
+	request, _ := http.NewRequest("GET", "/product/1", nil)
+	response := sendRequest(request)
+	checkStatusCode(t, http.StatusOK, response.Code)
+
+	request, _ = http.NewRequest("DELETE", "/product/1", response.Body)
+	response = sendRequest(request)
+	checkStatusCode(t, http.StatusOK, response.Code)
+
+	request, _ = http.NewRequest("GET", "/product/1", nil)
+	response = sendRequest(request)
+	checkStatusCode(t, http.StatusNotFound, response.Code)
+
+}
+func TestUpdateProduct(t *testing.T) {
+	clearTable()
+	addProduct("Product1", 10, 100.00)
+
+	request, _ := http.NewRequest("GET", "/product/1", nil)
+	response := sendRequest(request)
+
+	var oldProduct map[string]interface{}
+	json.Unmarshal(response.Body.Bytes(), &oldProduct)
+
+	var payload = []byte(`{"name": "Product1", "quantity": 10, "price": 255.00}`)
+	request, _ = http.NewRequest("PUT", "/product/1", bytes.NewBuffer(payload))
+	request.Header.Set("Content-Type", "application/json")
+
+	response = sendRequest(request)
+	var newProduct map[string]interface{}
+	json.Unmarshal(response.Body.Bytes(), &newProduct)
+
+	if newProduct["id"] != oldProduct["id"] {
+		t.Errorf("Expected: %v, Received: %v", newProduct["id"], oldProduct["id"])
+	}
+	if newProduct["name"] != oldProduct["name"] {
+		t.Errorf("Expected: %v, Received: %v", newProduct["name"], oldProduct["name"])
+	}
+	if newProduct["price"] == oldProduct["price"] { //because we have updated the price only
+		t.Errorf("Expected: %v, Received: %v", newProduct["price"], oldProduct["price"])
+	}
+	if newProduct["quantity"] != oldProduct["quantity"] {
+		t.Errorf("Expected: %v, Received: %v", newProduct["quantity"], oldProduct["quantity"])
 	}
 }
