@@ -13,9 +13,7 @@ env:
   DB_PASS: testpassword  
 
 jobs:
-
-  build:
-    name: Build
+  run-code-checks:
     runs-on: ubuntu-latest
     steps:
 
