@@ -16,7 +16,7 @@ jobs:
   run-code-checks:
     runs-on: ubuntu-latest
     steps:
-      -name: Set up MySQL
+      - name: Set up MySQL
         run: |
           sudo /etc/init.d/mysql start
           sudo mysql -e "CREATE USER '${{env.DB_USER}}'@'localhost' IDENTIFIED BY '${{env.DB_PASS}}';" -uroot -proot
