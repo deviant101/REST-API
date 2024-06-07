@@ -19,8 +19,8 @@ jobs:
       - name: Set up MySQL
         run: |
           sudo /etc/init.d/mysql start
-          sudo mysql -e "CREATE USER '${{env.DB_USER}}'@'localhost' IDENTIFIED BY '${{env.DB_PASS}}';" -uroot -proot
-          sudo mysql -e "CREATE DATABASE ${{env.DB_NAME}};" -u${{env.DB_USER}} -p${{env.DB_PASS}}
+          sudo mysql -e 'CREATE USER "${{env.DB_USER}}"@"localhost" IDENTIFIED BY "${{env.DB_PASS}}";' -utestuser -ptestpassword
+          sudo mysql -e 'CREATE DATABASE ${{env.DB_NAME}};'' -u${{env.DB_USER}} -p${{env.DB_PASS}}
 
       - name: Set up Go 1.x
         uses: actions/setup-go@v2
