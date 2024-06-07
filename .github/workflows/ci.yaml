@@ -10,7 +10,7 @@ on:
 env:
   DB_NAME: test_db
   DB_USER: testuser
-  DB_PASS: testpassword  
+  DB_PASS: testpassword
 
 jobs:
   run-code-checks:
