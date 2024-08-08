@@ -13,7 +13,7 @@ var app App
 
 func TestMain(m *testing.M) {
 
-	err := app.Initialize(DBUser, DBPass, "test_db")
+	err := app.Initialize(DBUser, DBPass, DBName)
 	if err != nil {
 		log.Fatal("Database Initializtion Error")
 	}

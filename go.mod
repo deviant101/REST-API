@@ -1,4 +1,4 @@
-module example.com/project
+module github.com/deviant101/REST-API
 
 go 1.22.2
 
