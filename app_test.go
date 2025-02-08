@@ -13,9 +13,9 @@ var app App
 
 func TestMain(m *testing.M) {
 
-	err := app.Initialize(DBUser, DBPass, DBName)
+	err := app.Initialize()
 	if err != nil {
-		log.Fatal("Database Initializtion Error")
+		log.Fatal("Database Initialization Error")
 	}
 	createTables()
 	m.Run()

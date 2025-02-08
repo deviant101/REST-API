@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -17,9 +18,13 @@ type App struct {
 	DB     *sql.DB
 }
 
-func (app *App) Initialize(DBUser string, DBPass string, DBName string) error {
-
-	connectionString := fmt.Sprintf("%v:%v@tcp(127.0.0.1)/%v", DBUser, DBPass, DBName)
+func (app *App) Initialize() error {
+	dbHost := os.Getenv("DB_HOST")
+	dbUser := os.Getenv("DB_USER")
+	dbPass := os.Getenv("DB_PASSWORD")
+	dbName := os.Getenv("DB_NAME")
+	dbPort := os.Getenv("DB_PORT")
+	connectionString := fmt.Sprintf("%v:%v@tcp(%v:%v)/%v", dbUser, dbPass, dbHost, dbPort, dbName)
 	var err error
 	app.DB, err = sql.Open("mysql", connectionString)
 
