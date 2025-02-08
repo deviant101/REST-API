@@ -38,10 +38,10 @@ jobs:
       - name: Setup MySQL
         run: |
           sudo service mysql start
-          mysql -u root -e "CREATE DATABASE IF NOT EXISTS ${{ env.DB_NAME }};"
-          mysql -u root -e "CREATE USER IF NOT EXISTS '${{ env.DB_USER }}'@'%' IDENTIFIED BY '${{ env.DB_PASSWORD }}';"
-          mysql -u root -e "GRANT ALL PRIVILEGES ON ${{ env.DB_NAME }}.* TO '${{ env.DB_USER }}'@'%';"
-          mysql -u root -e "FLUSH PRIVILEGES;"
+          mysql -u root -proot -e "CREATE DATABASE IF NOT EXISTS ${{ env.DB_NAME }};"
+          mysql -u root -proot -e "CREATE USER IF NOT EXISTS '${{ env.DB_USER }}'@'%' IDENTIFIED BY '${{ env.DB_PASSWORD }}';"
+          mysql -u root -proot -e "GRANT ALL PRIVILEGES ON ${{ env.DB_NAME }}.* TO '${{ env.DB_USER }}'@'%';"
+          mysql -u root -proot -e "FLUSH PRIVILEGES;"
 
       - name: Run Tests
         run: go test
