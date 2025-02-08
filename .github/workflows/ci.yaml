@@ -8,7 +8,7 @@ on:
     branches: [ master ]
 
 env:
-  DB_HOST: 127.0.0.1
+  DB_HOST: mysql
   DB_USER: api_user
   DB_PASSWORD: api_password
   DB_NAME: rest_api_db
@@ -36,6 +36,7 @@ jobs:
           go vet ./...
 
       - name: Start MySQL with Docker Compose
+        uses: docker/setup-compose-action@v1
         run: docker-compose up -d
 
       - name: Wait for MySQL
