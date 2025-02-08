@@ -35,8 +35,8 @@ jobs:
           go fmt ./...
           go vet ./...
 
-      - name: Set up Docker Compose
-        uses: docker/setup-compose-action@v1
+      - name: Install Docker Compose
+        run: sudo apt-get install docker-compose -y
 
       - name: Wait for MySQL
         run: |
