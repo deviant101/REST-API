@@ -8,7 +8,7 @@ on:
     branches: [ master ]
 
 env:
-  DB_HOST: mysql
+  DB_HOST: 127.0.0.1
   DB_USER: api_user
   DB_PASSWORD: api_password
   DB_NAME: rest_api_db
@@ -25,8 +25,6 @@ jobs:
           MYSQL_DATABASE: ${{ env.DB_NAME }}
           MYSQL_USER: ${{ env.DB_USER }}
           MYSQL_PASSWORD: ${{ env.DB_PASSWORD }}
-        ports:
-          - 3306:3306
     steps:
       - name: Set up Go 1.x
         uses: actions/setup-go@v2
