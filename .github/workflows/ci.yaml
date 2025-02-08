@@ -45,5 +45,14 @@ jobs:
           go fmt ./...
           go vet ./...
 
+      - name: Wait for MySQL
+        run: |
+          for i in {1..10}; do
+            if mysqladmin ping -h"${{ env.DB_HOST }}" -u"${{ env.DB_USER }}" -p"${{ env.DB_PASSWORD }}" --silent; then
+              break
+            fi
+            sleep 5
+          done
+
       - name: Run Tests
         run: go test
