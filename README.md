@@ -48,6 +48,53 @@ With this setup, the API ensures efficient and reliable data handling and routin
 
     Ensure MySQL is running and create a database for the application. Update the database credentials in the environment variables.
 
+4. **Set Environment Variables:**
+
+    Create a `.env` file in the root directory of the project and add the following environment variables:
+
+    ```sh
+    DB_HOST=localhost
+    DB_PORT=3306
+    DB_USER=root
+    DB_PASSWORD=yourpassword
+    DB_NAME=yourdatabase
+    ```
+
+5. **Docker Setup:**
+
+    This project includes Docker files to set up the entire stack easily. Ensure you have Docker installed on your machine.
+
+    - **Build the Docker image:**
+
+        ```sh
+        docker build -t rest-api .
+        ```
+
+    - **Run the Docker container:**
+
+        ```sh
+        docker run -d -p 8080:8080 --env-file .env rest-api
+        ```
+
+6. **Docker Compose Setup:**
+
+    This project includes a `docker-compose.yml` file to set up the entire stack, including MySQL, easily. Ensure you have Docker and Docker Compose installed on your machine.
+
+    - **Update the `.env` file to use the MySQL container:**
+
+        ```sh
+        DB_HOST=db
+        DB_PORT=3306
+        DB_USER=root
+        DB_PASSWORD=yourpassword
+        DB_NAME=yourdatabase
+        ```
+
+    - **Start the services using Docker Compose:**
+
+        ```sh
+        docker-compose up -d
+        ```
 
 ## Running the Application
 
