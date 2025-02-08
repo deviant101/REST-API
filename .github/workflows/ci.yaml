@@ -8,7 +8,7 @@ on:
     branches: [ master ]
 
 env:
-  DB_HOST: mysql
+  DB_HOST: rest_api_mysql
   DB_USER: api_user
   DB_PASSWORD: api_password
   DB_NAME: rest_api_db
