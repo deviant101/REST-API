@@ -45,14 +45,18 @@ jobs:
           go fmt ./...
           go vet ./...
 
-      - name: Wait for MySQL
+      - name: Setup MySQL
         run: |
           for i in {1..10}; do
-            if mysqladmin ping -h"${{ env.DB_HOST }}" -u"${{ env.DB_USER }}" -p"${{ env.DB_PASSWORD }}" --silent; then
+            if mysqladmin ping -h"${{ env.DB_HOST }}" -uroot -proot --silent; then
               break
             fi
             sleep 5
           done
+          mysql -h"${{ env.DB_HOST }}" -uroot -proot -e "CREATE DATABASE IF NOT EXISTS ${{ env.DB_NAME }};"
+          mysql -h"${{ env.DB_HOST }}" -uroot -proot -e "CREATE USER IF NOT EXISTS '${{ env.DB_USER }}'@'%' IDENTIFIED BY '${{ env.DB_PASSWORD }}';"
+          mysql -h"${{ env.DB_HOST }}" -uroot -proot -e "GRANT ALL PRIVILEGES ON ${{ env.DB_NAME }}.* TO '${{ env.DB_USER }}'@'%';"
+          mysql -h"${{ env.DB_HOST }}" -uroot -proot -e "FLUSH PRIVILEGES;"
 
       - name: Run Tests
         run: go test
