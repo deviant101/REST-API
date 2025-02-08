@@ -8,7 +8,7 @@ on:
     branches: [ master ]
 
 env:
-  DB_HOST: rest_api_mysql
+  DB_HOST: 127.0.0.1
   DB_USER: api_user
   DB_PASSWORD: api_password
   DB_NAME: rest_api_db
@@ -35,18 +35,13 @@ jobs:
           go fmt ./...
           go vet ./...
 
-      - name: Install Docker Compose
-        run: sudo apt-get install docker-compose -y
-
-      - name: Wait for MySQL
+      - name: Setup MySQL
         run: |
-          docker-compose up -d
-          for i in {1..10}; do
-            if mysqladmin ping -h"${{ env.DB_HOST }}" -u"${{ env.DB_USER }}" -p"${{ env.DB_PASSWORD }}" --silent; then
-              break
-            fi
-            sleep 5
-          done
+          sudo service mysql start
+          mysql -u root -e "CREATE DATABASE IF NOT EXISTS ${{ env.DB_NAME }};"
+          mysql -u root -e "CREATE USER IF NOT EXISTS '${{ env.DB_USER }}'@'%' IDENTIFIED BY '${{ env.DB_PASSWORD }}';"
+          mysql -u root -e "GRANT ALL PRIVILEGES ON ${{ env.DB_NAME }}.* TO '${{ env.DB_USER }}'@'%';"
+          mysql -u root -e "FLUSH PRIVILEGES;"
 
       - name: Run Tests
         run: go test

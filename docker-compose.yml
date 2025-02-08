@@ -1,18 +1,32 @@
 version: '3.8'
 
 services:
-  mysql:
-    image: mysql:8.0
-    container_name: rest_api_mysql
+  rest_api_mysql:
+    image: mysql:5.7
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: rest_api_db
       MYSQL_USER: api_user
       MYSQL_PASSWORD: api_password
     ports:
       - "3306:3306"
-    volumes:
-      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    environment:
+      DB_HOST: rest_api_mysql
+      DB_USER: api_user
+      DB_PASSWORD: api_password
+      DB_NAME: rest_api_db
+      DB_PORT: 3306
+    depends_on:
+      rest_api_mysql:
+        condition: service_healthy
 
 volumes:
   mysql_data:

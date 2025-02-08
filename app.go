@@ -19,7 +19,8 @@ type App struct {
 }
 
 func (app *App) Initialize() error {
-	dbHost := os.Getenv("DB_HOST")
+	// dbHost := os.Getenv("DB_HOST")
+	dbHost := "127.0.0.1" //for ci pipeline
 	dbUser := os.Getenv("DB_USER")
 	dbPass := os.Getenv("DB_PASSWORD")
 	dbName := os.Getenv("DB_NAME")
