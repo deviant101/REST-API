@@ -35,12 +35,12 @@ jobs:
           go fmt ./...
           go vet ./...
 
-      - name: Start MySQL with Docker Compose
+      - name: Set up Docker Compose
         uses: docker/setup-compose-action@v1
-        run: docker-compose up -d
 
       - name: Wait for MySQL
         run: |
+          run: docker-compose up -d
           for i in {1..10}; do
             if mysqladmin ping -h"${{ env.DB_HOST }}" -u"${{ env.DB_USER }}" -p"${{ env.DB_PASSWORD }}" --silent; then
               break
